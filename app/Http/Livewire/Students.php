@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Student;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -51,32 +52,11 @@ class Students extends Component
         $student = Student::find($id);
         $fileName = $student->photo;
 
-//
-//        $path_2 = storage_path($fileName);
-////        dd($path_2);
-//        $path = storage_path('/public/'.$fileName);
-//        if(file_exists($path_2)){
-//            unlink($path_2);
-//        }else{
-//            dd('File not found.');
-//        }
-
-
-//        if(Storage::url($fileName))
-//        {
-//            unlink($fileName);
-//        }else
-//        {
-//            dd('not found');
-//        }
-
         $student->delete();
-
-        /*$file_path = storage_path('/app/public/photos/').$fileName;
-        if(file_exists($file_path)){
-            unlink($file_path);
-        }*/
-
+        if(Storage::disk('public')->exists($fileName))
+        {
+            Storage::disk('public')->delete($fileName);
+        }
         $this->mount();
         $this->emit('alert',['type'=>'success','message'=>'data delete successfully']);
     }
@@ -94,14 +74,21 @@ class Students extends Component
     public function upData()
     {
         $student = Student::find($this->sid);
+        $photoName = $student->photo;
+
         $student->name = $this->name;
         $student->email = $this->email;
         if($this->upphoto)
         {
             $fileName = $this->upphoto->store('photos', 'public');
             $student->photo = $fileName;
+            if(Storage::disk('public')->exists($photoName))
+            {
+                Storage::disk('public')->delete($photoName);
+            }
         }
         $student->save();
+
         $this->reset(['name', 'email']);
         $this->upphoto = '';
         $this->mount();

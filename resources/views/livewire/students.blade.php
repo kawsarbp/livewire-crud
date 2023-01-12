@@ -50,7 +50,7 @@
                         <td><img style="width: 50px;" src="{{ Storage::url($student->photo) }}" alt="photo"></td>
                         <td>
                             <button wire:click="updatestudent({{ $student->id }})" class="btn btn-info btn-sm">Edit</button>
-                            <button wire:click="deletedata({{ $student->id }})" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure !')">Delete</button>
+                            <button wire:click="deletedata({{ $student->id }})" class="btn btn-danger btn-sm" >Delete</button>
                         </td>
                     </tr>
                 @endforeach
